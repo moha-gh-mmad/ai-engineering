@@ -12,7 +12,7 @@ function App() {
       });
   }, []);
 
-  return <div className="">{message} ajarngnsf</div>;
+  return <div className="font-bold p-4 text-3xl">{message} ajarngnsf</div>;
 }
 
 export default App;
