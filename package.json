@@ -9,5 +9,5 @@
   "peerDependencies": {
     "typescript": "^7"
   },
-  "workspaces": ["packages/*"]
+  "workspaces": ["packages/client", "packages/client"]
 }
