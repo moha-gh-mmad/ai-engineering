@@ -25,7 +25,12 @@ export const chatController = {
          const response = await chatService.sendMessage(prompt, conversationId);
          res.json({ message: response.message });
       } catch (error) {
-         res.status(500).json({ error: 'Failed to generate a response.' });
+         console.error('Chat error:', error);
+
+         res.status(500).json({
+            error: 'Failed to generate a response.',
+            details: error instanceof Error ? error.message : error,
+         });
       }
    },
 };
