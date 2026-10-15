@@ -16,7 +16,7 @@ const parkInfo = fs.readFileSync(
 
 const instructions = template.replace('{{parkInfo}}', parkInfo);
 
-interface xchatResponse {
+interface chatResponse {
    id: string;
    message: string;
 }
