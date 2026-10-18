@@ -1,8 +1,9 @@
 import axios from 'axios';
-import { useEffect, useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
-
 import StarRating from './StarRating';
+import { useQuery } from '@tanstack/react-query';
+import { HiSparkles } from 'react-icons/hi2';
+import { useState } from 'react';
 
 type Props = {
    productId: number;
@@ -22,23 +23,31 @@ type GetReviewsResponse = {
 };
 
 const ReviewList = ({ productId }: Props) => {
-   const [reviewsData, setReviewData] = useState<GetReviewsResponse>();
-   const [isLoaidng, setLoading] = useState(false);
+   const [summary, setSummary] = useState('');
+   const {
+      data: reviewData,
+      isLoading,
+      error,
+   } = useQuery<GetReviewsResponse>({
+      queryKey: ['reviews', productId],
+      queryFn: () => fetchReviews(),
+   });
+
+   const handleSummarize = async () => {
+      const { data } = await axios.post(
+         `/api/products/${productId}/reviews/summarize`
+      );
+      setSummary(data.summary);
+   };
 
    const fetchReviews = async () => {
-      setLoading(true);
       const { data } = await axios.get<GetReviewsResponse>(
          `/api/products/${productId}/reviews`
       );
-      setReviewData(data);
-      setLoading(false);
+      return data;
    };
 
-   useEffect(() => {
-      fetchReviews();
-   }, []);
-
-   if (isLoaidng) {
+   if (isLoading) {
       return (
          <div className="flex flex-col gap-5">
             {[1, 2, 3].map((i) => (
@@ -51,17 +60,47 @@ const ReviewList = ({ productId }: Props) => {
          </div>
       );
    }
+
+   if (error) {
+      return (
+         <p className="text-red-500">Could not fetch reviews. Try again!</p>
+      );
+   }
+
+   if (!reviewData?.reviews.length) {
+      return null;
+   }
+
+   const currentSummary = reviewData.summary || summary;
+
    return (
       <div>
-         {reviewsData?.reviews.map((review) => (
-            <div className="flex flex-col gap-5" key={review.id}>
-               <div className="font-semibold">{review.author}</div>
-               <div className="">
-                  <StarRating value={review.rating} />
+         <div className="mb-5">
+            {currentSummary ? (
+               <p>{currentSummary}</p>
+            ) : (
+               <button
+                  onClick={handleSummarize}
+                  className={
+                     'flex bg-[linear-gradient(to_right,#9333ea,#3b82f6,#22d3ee)] font-bold rounded-md p-2 text-white justify-center items-center gap-2 hover:scale-105 transition-all duration-200 ease-in-out'
+                  }
+               >
+                  <HiSparkles />
+                  Summarize
+               </button>
+            )}
+         </div>
+         <div className="flex flex-col gap-5">
+            {reviewData?.reviews.map((review) => (
+               <div key={review.id}>
+                  <div className="font-semibold">{review.author}</div>
+                  <div className="">
+                     <StarRating value={review.rating} />
+                  </div>
+                  <p className="py-2">{review.content}</p>
                </div>
-               <p className="py-2">{review.content}</p>
-            </div>
-         ))}
+            ))}
+         </div>
       </div>
    );
 };
