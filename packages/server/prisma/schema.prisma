@@ -41,7 +41,7 @@ model Product {
 model Review {
   id        Int      @id @default(autoincrement())
   author    String   @db.VarChar(255)
-  rating    Int      @db.TinyInt
+  rating    Decimal  @db.Decimal(3, 2)
   content   String   @db.Text
   createdAt DateTime @default(now())
   productId Int
