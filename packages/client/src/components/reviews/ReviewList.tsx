@@ -54,7 +54,7 @@ const ReviewList = ({ productId }: Props) => {
                   {currentSummary}
                </div>
             ) : (
-               <div>
+               <div className="p-2">
                   <button
                      onClick={() => summaryMutation.mutate()}
                      className={
@@ -78,7 +78,7 @@ const ReviewList = ({ productId }: Props) => {
                </div>
             )}
          </div>
-         <div className="flex flex-col gap-5">
+         <div className="flex flex-col gap-5 p-2">
             {reviewsQuery.data?.reviews.map((review) => (
                <div key={review.id}>
                   <div className="font-semibold">{review.author}</div>

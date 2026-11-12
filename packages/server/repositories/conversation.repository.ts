@@ -1,10 +1,17 @@
-const conversations = new Map<string, string>();
+import type { ChatMessage } from '../llm/client';
+
+const conversations = new Map<string, ChatMessage[]>();
 
 export const conversationRepository = {
-   getLastResponseId(conversationId: string) {
-      return conversations.get(conversationId);
+   getMessages(conversationId: string): ChatMessage[] {
+      return conversations.get(conversationId) ?? [];
    },
-   setLastResponseId(conversationId: string, responseId: string) {
-      return conversations.set(conversationId, responseId);
+
+   addMessage(conversationId: string, message: ChatMessage): void {
+      const history = conversations.get(conversationId) ?? [];
+
+      history.push(message);
+
+      conversations.set(conversationId, history);
    },
 };

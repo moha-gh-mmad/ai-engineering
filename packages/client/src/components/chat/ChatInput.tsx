@@ -26,10 +26,10 @@ const ChatInput = ({ onSubmit }: Props) => {
    };
 
    return (
-      <div className="relative w-full rounded-3xl">
+      <div className="relative isolate w-full rounded-3xl">
          <div
             aria-hidden="true"
-            className="pointer-events-none absolute -inset-1 -z-10 rounded-[calc(1.5rem+4px)] bg-[conic-gradient(from_var(--angle),#ff4545,#00ff99,#006aff,#ff0095,#ff4545)] animate-[border-spin_5s_linear_infinite] blur-md opacity-50"
+            className="pointer-events-none absolute -inset-1 -z-10 rounded-[calc(1.5rem+4px)] bg-[conic-gradient(from_var(--angle),#ff4545,#00ff99,#006aff,#ff0095,#ff4545)] animate-[border-spin_5s_linear_infinite] blur-md opacity-70"
          />
 
          <div
@@ -48,7 +48,7 @@ const ChatInput = ({ onSubmit }: Props) => {
                   validate: (data) => data.trim().length > 0,
                })}
                autoFocus
-               className="w-full border-0 focus:outline-0 resize-none"
+               className="w-full resize-none border-0 bg-transparent focus:outline-0"
                placeholder="Ask anything"
                maxLength={1000}
             />
@@ -56,7 +56,7 @@ const ChatInput = ({ onSubmit }: Props) => {
             <Button
                disabled={!formState.isValid}
                type="submit"
-               className="rounded-full w-9 h-9 items-center justify-center"
+               className="h-9 w-9 items-center justify-center rounded-full"
             >
                <FaArrowUp />
             </Button>

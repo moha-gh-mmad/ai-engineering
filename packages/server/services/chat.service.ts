@@ -11,7 +11,7 @@ const parkInfo = fs.readFileSync(
 
 const instructions = template.replace('{{parkInfo}}', parkInfo);
 
-interface chatResponse {
+interface ChatResponse {
    id: string;
    message: string;
 }
@@ -20,18 +20,30 @@ export const chatService = {
    async sendMessage(
       prompt: string,
       conversationId: string
-   ): Promise<chatResponse> {
+   ): Promise<ChatResponse> {
+      const history = await conversationRepository.getMessages(conversationId);
       const response = await llmClient.generateText({
-         model: 'gpt-4o-mini',
+         model: 'gpt-5.6-sol',
          instructions,
+         history,
          prompt,
          temperature: 0.2,
          maxTokens: 100,
-         previousResponseId:
-            conversationRepository.getLastResponseId(conversationId),
       });
 
-      conversationRepository.setLastResponseId(conversationId, response.id);
-      return { id: response.id, message: response.text };
+      conversationRepository.addMessage(conversationId, {
+         role: 'user',
+         content: prompt,
+      });
+
+      conversationRepository.addMessage(conversationId, {
+         role: 'assistant',
+         content: response.text,
+      });
+
+      return {
+         id: response.id,
+         message: response.text,
+      };
    },
 };
