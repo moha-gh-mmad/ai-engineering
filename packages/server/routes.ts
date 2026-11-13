@@ -1,18 +1,11 @@
-import express, { response } from 'express';
-import type { Request, Response } from 'express';
-import { chatController } from './controllers/chat.controller';
-import { PrismaMariaDb } from '@prisma/adapter-mariadb';
-import { PrismaClient } from './generated/prisma/client';
+import { Router } from 'express';
 import { reviewController } from './controllers/review.controller';
+import { chatController } from './controllers/chat.controller';
 
-const router = express.Router();
+const router = Router();
 
-router.get('/', (req: Request, res: Response) => {
-   res.send('Hello World!!!');
-});
-
-router.get('/api/hello', (req: Request, res: Response) => {
-   res.json({ message: 'Hello World!!!' });
+router.get('/', (_req, res) => {
+   res.status(200).send('API is running.');
 });
 
 router.post('/api/chat', chatController.sendMessage);

@@ -1,60 +1,39 @@
-import axios from 'axios';
-import { useRef, useState } from 'react';
-import type { Message } from './ChatMessages';
 import ChatMessages from './ChatMessages';
 import ChatInput, { type ChatFormData } from './ChatInput';
 import TypingIndicator from './TypingIndicator';
-import popSound from '@/assets/sounds/pop.mp3';
-import notificationSound from '@/assets/sounds/notification.mp3';
-
-const popAudio = new Audio(popSound);
-popAudio.volume = 0.2;
-
-const notificationAudio = new Audio(notificationSound);
-notificationAudio.volume = 0.2;
-
-type ChatResponse = {
-   message: string;
-};
+import useChatConversation from './useChatConversation';
+import useChatSounds from './useChatSounds';
 
 const ChatBot = () => {
-   const [messages, setMessages] = useState<Message[]>([]);
-   const [isBotTyping, setIsBotTyping] = useState(false);
-   const [error, setError] = useState('');
-   const conversationId = useRef(crypto.randomUUID());
+   const { messages, isBotTyping, error, sendMessage } = useChatConversation();
 
-   const onSubmit = async ({ prompt }: ChatFormData) => {
-      try {
-         setMessages((prev) => [...prev, { content: prompt, role: 'user' }]);
-         setIsBotTyping(true);
-         setError('');
-         popAudio.play();
+   const { playSendSound, playResponseSound } = useChatSounds();
 
-         const { data } = await axios.post<ChatResponse>('/api/chat', {
-            prompt,
-            conversationId: conversationId.current,
-         });
-         setMessages((prev) => [
-            ...prev,
-            { content: data.message, role: 'bot' },
-         ]);
-         notificationAudio.play();
-      } catch (error) {
-         console.log(error);
-         setError('Something went wrong, try again later.');
-      } finally {
-         setIsBotTyping(false);
+   const handleSubmit = async (data: ChatFormData) => {
+      playSendSound();
+
+      const succeeded = await sendMessage(data);
+
+      if (succeeded) {
+         playResponseSound();
       }
    };
 
    return (
-      <div className="flex flex-col h-full max-w-6xl w-full mx-auto">
-         <div className="flex flex-col flex-1 gap-3 mb-10 overflow-y-auto">
+      <div className="mx-auto flex h-full w-full max-w-6xl flex-col">
+         <div className="mb-10 flex flex-1 flex-col gap-3 overflow-y-auto">
             <ChatMessages messages={messages} />
+
             {isBotTyping && <TypingIndicator />}
-            {error && <p className="text-red-600">{error}</p>}
+
+            {error && (
+               <p role="alert" className="text-sm text-red-600">
+                  {error}
+               </p>
+            )}
          </div>
-         <ChatInput onSubmit={onSubmit} />
+
+         <ChatInput onSubmit={handleSubmit} />
       </div>
    );
 };
