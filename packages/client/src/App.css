@@ -182,3 +182,67 @@
       border-right-color: var(--border);
    }
 }
+
+.view-transition-content {
+   view-transition-name: page-content;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+   animation: none;
+}
+
+/* Forward: Chatbot -> Reviews */
+html[data-transition-direction='forward']::view-transition-old(page-content) {
+   animation: slide-out-left 550ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+html[data-transition-direction='forward']::view-transition-new(page-content) {
+   animation: slide-in-right 550ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Backward: Reviews -> Chatbot */
+html[data-transition-direction='backward']::view-transition-old(page-content) {
+   animation: slide-out-right 550ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+html[data-transition-direction='backward']::view-transition-new(page-content) {
+   animation: slide-in-left 550ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes slide-out-left {
+   to {
+      transform: translateX(-100%);
+   }
+}
+
+@keyframes slide-in-right {
+   from {
+      transform: translateX(100%);
+   }
+   to {
+      transform: translateX(0);
+   }
+}
+
+@keyframes slide-out-right {
+   to {
+      transform: translateX(100%);
+   }
+}
+
+@keyframes slide-in-left {
+   from {
+      transform: translateX(-100%);
+   }
+   to {
+      transform: translateX(0);
+   }
+}
+
+@media (prefers-reduced-motion: reduce) {
+   ::view-transition-old(page-content),
+   ::view-transition-new(page-content) {
+      animation-duration: 1ms !important;
+   }
+}
