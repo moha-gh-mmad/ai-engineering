@@ -31,7 +31,7 @@ function App() {
       <div className="flex h-dvh flex-col overflow-hidden bg-slate-50 font-sans text-slate-900">
          <AppHeader activeTab={activeTab} onTabChange={handleTabChange} />
 
-         <main className="view-transition-content mx-auto flex min-h-0 w-full flex-1 flex-col px-3 py-4 sm:px-6 sm:py-5">
+         <main className="view-transition-content mx-auto flex min-h-0 w-full flex-1 flex-col px-3 sm:px-6">
             <Activity mode={activeTab === 'chatbot' ? 'visible' : 'hidden'}>
                <ChatBot />
             </Activity>
