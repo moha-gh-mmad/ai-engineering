@@ -7,20 +7,27 @@ config({
    path: resolve(import.meta.dir, '../.env'),
 });
 
+const host = process.env.DATABASE_HOST ?? '127.0.0.1';
+const port = Number(process.env.DATABASE_PORT ?? 3306);
+const user = process.env.DATABASE_USER;
 const password = process.env.DATABASE_PASSWORD;
 const database = process.env.DATABASE_NAME;
 
-if (password === undefined || !database) {
-   throw new Error('Missing DATABASE_PASSWORD or DATABASE_NAME in .env');
+if (!user || password === undefined || !database) {
+   throw new Error('Missing database configuration in .env');
+}
+
+if (!Number.isInteger(port) || port < 1 || port > 65535) {
+   throw new Error('Invalid DATABASE_PORT');
 }
 
 const adapter = new PrismaMariaDb({
-   host: '127.0.0.1',
-   port: 3306,
-   user: 'root',
+   host,
+   port,
+   user,
    password,
    database,
-   connectionLimit: 5,
+   connectionLimit: 2,
 });
 
 export const prisma = new PrismaClient({ adapter });
